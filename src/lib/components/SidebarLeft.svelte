@@ -8,6 +8,8 @@
 		ChevronsUpDown,
 		Check,
 		Search,
+		ChevronDown,
+		Settings2,
 	} from "@lucide/svelte";
 	import { slide } from "svelte/transition";
 
@@ -25,6 +27,11 @@
 
 	let open = $state(false);
 	let searchQuery = $state("");
+	let advancedOpen = $state(false);
+
+	// Split fields into basic and advanced
+	let basicFields = $derived(currentFields.filter((f: any) => !f.advanced));
+	let advancedFields = $derived(currentFields.filter((f: any) => f.advanced));
 
 	// Derived state for filtering categories
 	let filteredCategories = $derived(
@@ -43,7 +50,6 @@
 	function toggleOpen() {
 		open = !open;
 		if (open) {
-			// Focus search on open (micro-optimization)
 			setTimeout(
 				() => document.getElementById("cat-search")?.focus(),
 				10,
@@ -83,58 +89,56 @@
 					/>
 					<span class="font-medium"
 						>{categories.find((c: any) => c.id === selectedCategory)
-							?.name || "Select category..."}</span
+							?.name || "Select..."}</span
 					>
 				</span>
 				<ChevronsUpDown
 					size={14}
-					class="text-muted-foreground opacity-50"
+					class="text-muted-foreground flex-shrink-0"
 				/>
 			</button>
 
 			{#if open}
 				<div
-					class="absolute top-full left-0 right-0 mt-1.5 p-1 bg-popover border border-sidebar-border rounded-lg shadow-xl z-50 flex flex-col gap-1 ring-1 ring-black/5"
-					transition:slide={{ duration: 150, axis: "y" }}
+					transition:slide={{ duration: 150 }}
+					class="absolute z-50 w-full mt-2 bg-popover border border-border rounded-lg shadow-xl overflow-hidden"
 				>
 					<!-- Search -->
-					<div
-						class="px-2 py-1.5 flex items-center gap-2 border-b border-sidebar-border mb-1"
-					>
-						<Search size={12} class="text-muted-foreground" />
-						<input
-							id="cat-search"
-							type="text"
-							bind:value={searchQuery}
-							placeholder="Search categories..."
-							class="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground"
-						/>
+					<div class="p-2 border-b border-border">
+						<div class="relative">
+							<Search
+								size={12}
+								class="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+							/>
+							<input
+								id="cat-search"
+								type="text"
+								bind:value={searchQuery}
+								placeholder="Search categories..."
+								class="w-full bg-muted/50 border-none rounded-md pl-7 pr-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/50 outline-none focus:ring-1 focus:ring-ring"
+							/>
+						</div>
 					</div>
 
 					<!-- Options -->
-					<div
-						class="max-h-[200px] overflow-y-auto flex flex-col gap-0.5"
-					>
+					<div class="max-h-[200px] overflow-y-auto py-1">
 						{#each filteredCategories as cat}
 							<button
-								class="flex items-center justify-between px-2 py-1.5 rounded-md text-xs text-left transition-colors {selectedCategory ===
-								cat.id
-									? 'bg-primary text-primary-foreground'
-									: 'text-foreground hover:bg-accent hover:text-accent-foreground'}"
 								onclick={() => handleSelect(cat.id)}
+								class="w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-accent/50 text-left {selectedCategory ===
+								cat.id
+									? 'text-foreground'
+									: 'text-muted-foreground'}"
 							>
-								<div class="flex items-center gap-2">
+								<span class="flex items-center gap-2">
 									<svelte:component
 										this={categoryIcons[cat.id] || Box}
-										size={14}
-										class={selectedCategory === cat.id
-											? "text-primary-foreground"
-											: "text-muted-foreground"}
+										size={13}
 									/>
-									<span>{cat.name}</span>
-								</div>
+									{cat.name}
+								</span>
 								{#if selectedCategory === cat.id}
-									<Check size={12} />
+									<Check size={12} class="text-primary" />
 								{/if}
 							</button>
 						{/each}
@@ -178,16 +182,6 @@
 						: 'bg-transparent border-sidebar-border hover:border-sidebar-border/80 hover:bg-sidebar-accent/50 text-muted-foreground'}"
 					onclick={() => selectTemplate(tpl.id)}
 				>
-					<div
-						class="w-8 h-8 rounded-md bg-background flex items-center justify-center border border-sidebar-border shadow-sm group-hover:-translate-y-0.5 transition-transform duration-300"
-					>
-						<LayoutTemplate
-							size={14}
-							class={selectedTemplate === tpl.id
-								? "text-primary"
-								: "text-muted-foreground/70"}
-						/>
-					</div>
 					<span
 						class="text-[11px] font-medium text-center leading-tight"
 						>{tpl.name}</span
@@ -210,25 +204,106 @@
 			</p>
 		</div>
 
+		<!-- Basic Fields -->
 		<div class="flex flex-col gap-3">
-			{#each currentFields as field}
+			{#each basicFields as field}
 				<div class="group">
 					<label
 						for={field.key}
 						class="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5 block"
 					>
-						{field.key}
+						{field.label}
 					</label>
-					<input
-						id={field.key}
-						type="text"
-						bind:value={params[field.key]}
-						oninput={() => imageKey++}
-						placeholder={field.placeholder}
-						class="w-full bg-background border border-input focus:border-ring rounded-md px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/30 outline-none transition-all font-mono shadow-sm"
-					/>
+					{#if field.key.toLowerCase().includes("color")}
+						<div class="flex gap-2">
+							<input
+								id={field.key + "-picker"}
+								type="color"
+								bind:value={params[field.key]}
+								oninput={() => imageKey++}
+								class="w-12 h-10 rounded-md border border-input cursor-pointer bg-background"
+							/>
+							<input
+								id={field.key}
+								type="text"
+								bind:value={params[field.key]}
+								oninput={() => imageKey++}
+								placeholder={field.placeholder}
+								class="flex-1 bg-background border border-input focus:border-ring rounded-md px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/30 outline-none transition-all font-mono shadow-sm"
+							/>
+						</div>
+					{:else}
+						<input
+							id={field.key}
+							type="text"
+							bind:value={params[field.key]}
+							oninput={() => imageKey++}
+							placeholder={field.placeholder}
+							class="w-full bg-background border border-input focus:border-ring rounded-md px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/30 outline-none transition-all font-mono shadow-sm"
+						/>
+					{/if}
 				</div>
 			{/each}
 		</div>
+
+		<!-- Advanced Fields (Collapsible) -->
+		{#if advancedFields.length > 0}
+			<div class="mt-2">
+				<button
+					onclick={() => (advancedOpen = !advancedOpen)}
+					class="w-full flex items-center justify-between px-3 py-2 text-xs text-muted-foreground hover:text-foreground bg-muted/30 hover:bg-muted/50 rounded-md transition-all border border-transparent hover:border-border"
+				>
+					<span class="flex items-center gap-2">
+						<Settings2 size={12} />
+						Advanced
+					</span>
+					<ChevronDown
+						size={12}
+						class="transition-transform duration-200 {advancedOpen
+							? 'rotate-180'
+							: ''}"
+					/>
+				</button>
+
+				{#if advancedOpen}
+					<div
+						transition:slide={{ duration: 150 }}
+						class="mt-3 pl-3 border-l-2 border-muted flex flex-col gap-3"
+					>
+						<p class="text-[9px] text-muted-foreground/70">
+							Override auto-calculated colors
+						</p>
+						{#each advancedFields as field}
+							<div class="group">
+								<label
+									for={field.key}
+									class="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5 block"
+								>
+									{field.label}
+								</label>
+								<div class="flex gap-2">
+									<input
+										id={field.key + "-picker"}
+										type="color"
+										bind:value={params[field.key]}
+										oninput={() => imageKey++}
+										class="w-12 h-10 rounded-md border border-input cursor-pointer bg-background"
+									/>
+									<input
+										id={field.key}
+										type="text"
+										bind:value={params[field.key]}
+										oninput={() => imageKey++}
+										placeholder={field.placeholder ||
+											"Auto"}
+										class="flex-1 bg-background border border-input focus:border-ring rounded-md px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/30 outline-none transition-all font-mono shadow-sm"
+									/>
+								</div>
+							</div>
+						{/each}
+					</div>
+				{/if}
+			</div>
+		{/if}
 	</div>
 </aside>
