@@ -1,6 +1,6 @@
-# Contributing to OGX
+# Contributing to ogx
 
-Thank you for your interest in contributing to OGX! This guide will help you add new Open Graph image templates.
+Thank you for your interest in contributing to ogx! This guide will help you add new Open Graph image templates.
 
 ## Adding a New Template
 
