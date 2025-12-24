@@ -30,7 +30,6 @@
         { id: "html", name: "Plain HTML", icon: HtmlIcon },
     ];
 
-    
     const scriptOpen = "<" + "script>";
     const scriptClose = "</" + "script>";
 
@@ -44,12 +43,10 @@
         setTimeout(() => (copied = false), 2000);
     }
 
-    
     let paramKeys = $derived(
         currentFields.filter((f: any) => !f.advanced).map((f: any) => f.key),
     );
 
-    
     let dynamicUrl = $derived.by(() => {
         const base = `/og/${selectedTemplate}`;
         if (paramKeys.length === 0) return base;
@@ -57,12 +54,10 @@
         return `${base}?${params}`;
     });
 
-    
     let selectedFrameworkInfo = $derived(
         frameworks.find((f) => f.id === selectedFramework),
     );
 
-    
     let snippet = $derived.by(() => {
         const paramsStr = paramKeys.join(", ");
 
@@ -89,7 +84,6 @@
                     return `<meta property="og:image" content="${origin}${imageUrl}" />`;
             }
         } else {
-            
             switch (selectedFramework) {
                 case "svelte":
                     return `${scriptOpen}
@@ -275,7 +269,7 @@ useHead({
     <div class="p-4 border-t border-sidebar-border mt-auto">
         <div class="text-[10px] text-muted-foreground text-center">
             ogx is open source. <a
-                href="https:
+                href="https://github.com/judekim0507/ogx"
                 class="underline hover:text-foreground transition-all"
                 target="_blank"
                 rel="noopener noreferrer">View on GitHub</a
