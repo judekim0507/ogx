@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 
-// Font configuration
+
 export interface FontConfig {
 	name: string;
 	filename: string;
@@ -9,17 +9,17 @@ export interface FontConfig {
 	style: 'normal' | 'italic';
 }
 
-// Default fonts to include
+
 export const DEFAULT_FONTS: FontConfig[] = [
 	{ name: 'Inter', filename: 'Inter-Regular.ttf', weight: 400, style: 'normal' },
 	{ name: 'Inter', filename: 'Inter-SemiBold.ttf', weight: 600, style: 'normal' },
 	{ name: 'Inter', filename: 'Inter-Bold.ttf', weight: 700, style: 'normal' }
 ];
 
-// Cache loaded fonts in memory
+
 let fontCache: Map<string, ArrayBuffer> | null = null;
 
-// Path to fonts directory
+
 const FONTS_DIR = join(process.cwd(), 'static', 'fonts');
 
 /**

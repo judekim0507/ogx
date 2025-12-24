@@ -6,7 +6,7 @@ import { getCachedImage, cacheImage, generateCacheKey } from '$lib/og/cache';
 export const GET: RequestHandler = async ({ params, url }) => {
 	const templateName = params.template;
 
-	// 1. Validate template exists
+	
 	const template = getTemplate(templateName);
 	if (!template) {
 		return new Response(
@@ -21,14 +21,14 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		);
 	}
 
-	// 2. Parse query params
+	
 	const searchParams = Object.fromEntries(url.searchParams);
 	const isPreview = searchParams.preview === 'true';
 	
-	// Remove preview param so it doesn't affect validation/caching
+	
 	delete searchParams.preview;
 
-	// 3. Validate props against schema
+	
 	const propsResult = template.schema.safeParse(searchParams);
 	if (!propsResult.success) {
 		return new Response(
@@ -43,10 +43,10 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		);
 	}
 
-	// 4. Generate cache key from template + params
+	
 	const cacheKey = generateCacheKey(templateName, searchParams);
 
-	// 5. Check cache (skip for preview mode)
+	
 	if (!isPreview) {
 		const cached = await getCachedImage(cacheKey);
 		if (cached) {
@@ -60,16 +60,16 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		}
 	}
 
-	// 6. Render image
+	
 	try {
 		const png = await renderOgImage(template, propsResult.data);
 
-		// 7. Cache result (non-blocking, skip for preview mode)
+		
 		if (!isPreview) {
 			cacheImage(cacheKey, png).catch(console.error);
 		}
 
-		// 8. Return response
+		
 		return new Response(new Uint8Array(png), {
 			headers: {
 				'Content-Type': 'image/png',

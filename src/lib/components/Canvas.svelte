@@ -15,24 +15,20 @@
     let debounceTimer: ReturnType<typeof setTimeout> | null = null;
     let hasLoaded = $state(false);
 
-    // Debounced image URL update (500ms delay)
     function updatePreview() {
         isLoading = true;
-        // Add preview=true to skip caching
+
         const separator = imageUrl.includes("?") ? "&" : "?";
         imgSrc = imageUrl + separator + "preview=true";
     }
 
-    // Watch for changes and debounce
     $effect(() => {
-        // Subscribe to imageKey changes
         const _ = imageKey;
 
         if (debounceTimer) clearTimeout(debounceTimer);
         debounceTimer = setTimeout(updatePreview, 500);
     });
 
-    // Initial load
     onMount(() => {
         updatePreview();
     });
@@ -48,7 +44,6 @@
 </script>
 
 <main class="flex-1 flex flex-col bg-muted/10 relative overflow-hidden">
-    <!-- Canvas Header -->
     <div
         class="h-14 flex items-center px-6 border-b border-border bg-background"
     >
@@ -62,7 +57,6 @@
         </div>
     </div>
 
-    <!-- Preview Area -->
     <div
         class="flex-1 flex items-center justify-center relative p-8 md:p-12 overflow-hidden bg-dot-pattern"
     >
@@ -70,7 +64,6 @@
             class="relative z-10 w-full max-w-[900px] shadow-sm rounded-lg overflow-hidden border border-border bg-background"
         >
             <div class="relative aspect-[1200/630] w-full bg-[#0f172a]">
-                <!-- Skeleton Loader (shows when no image loaded yet) -->
                 {#if !hasLoaded}
                     <div
                         class="absolute inset-0 flex flex-col items-center justify-center gap-4 p-16"
@@ -80,7 +73,6 @@
                     </div>
                 {/if}
 
-                <!-- Actual Image -->
                 {#key imgSrc}
                     <img
                         src={imgSrc}
@@ -92,7 +84,6 @@
                     />
                 {/key}
 
-                <!-- Loading Overlay (shows during updates) -->
                 {#if isLoading && hasLoaded}
                     <div
                         class="absolute inset-0 bg-background/30 flex items-center justify-center backdrop-blur-[1px] transition-opacity"
@@ -111,7 +102,6 @@
                 {/if}
             </div>
 
-            <!-- Quick Actions Overlay -->
             <div
                 class="absolute top-4 right-4 opacity-0 hover:opacity-100 transition-opacity"
             >

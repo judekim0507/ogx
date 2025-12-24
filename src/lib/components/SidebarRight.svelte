@@ -30,9 +30,9 @@
         { id: "html", name: "Plain HTML", icon: HtmlIcon },
     ];
 
-    // Break up script tags to prevent Svelte parser from recognizing them
-    const scriptOpen = '<' + 'script>';
-    const scriptClose = '</' + 'script>';
+    
+    const scriptOpen = "<" + "script>";
+    const scriptClose = "</" + "script>";
 
     onMount(() => {
         origin = window.location.origin;
@@ -44,12 +44,12 @@
         setTimeout(() => (copied = false), 2000);
     }
 
-    // Get param keys from currentFields (non-advanced only)
+    
     let paramKeys = $derived(
-        currentFields.filter((f: any) => !f.advanced).map((f: any) => f.key)
+        currentFields.filter((f: any) => !f.advanced).map((f: any) => f.key),
     );
 
-    // Generate dynamic URL with variables
+    
     let dynamicUrl = $derived.by(() => {
         const base = `/og/${selectedTemplate}`;
         if (paramKeys.length === 0) return base;
@@ -57,12 +57,12 @@
         return `${base}?${params}`;
     });
 
-    // Selected framework info
+    
     let selectedFrameworkInfo = $derived(
-        frameworks.find(f => f.id === selectedFramework)
+        frameworks.find((f) => f.id === selectedFramework),
     );
 
-    // Framework-specific snippets
+    
     let snippet = $derived.by(() => {
         const paramsStr = paramKeys.join(", ");
 
@@ -89,7 +89,7 @@
                     return `<meta property="og:image" content="${origin}${imageUrl}" />`;
             }
         } else {
-            // Dynamic mode
+            
             switch (selectedFramework) {
                 case "svelte":
                     return `${scriptOpen}
@@ -119,7 +119,7 @@ useHead({
 });`;
                 case "html":
                 default:
-                    return `<!-- Replace variables with your data -->
+                    return `
 <meta property="og:image" content="${origin}${dynamicUrl}" />`;
             }
         }
@@ -129,7 +129,6 @@ useHead({
 <aside
     class="w-[300px] bg-sidebar border-l border-sidebar-border flex flex-col h-full text-sidebar-foreground"
 >
-    <!-- Top Section: Mode Toggle + URL -->
     <div class="p-4 flex flex-col gap-4 border-b border-sidebar-border">
         <div class="flex items-center justify-between">
             <h2
@@ -139,19 +138,22 @@ useHead({
             </h2>
         </div>
 
-        <!-- Modern Toggle -->
-        <div class="flex p-1 bg-muted/30 rounded-lg border border-sidebar-border">
+        <div
+            class="flex p-1 bg-muted/30 rounded-lg border border-sidebar-border"
+        >
             <button
-                onclick={() => mode = "dynamic"}
-                class="flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all {mode === 'dynamic'
+                onclick={() => (mode = "dynamic")}
+                class="flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all {mode ===
+                'dynamic'
                     ? 'bg-background text-foreground shadow-sm'
                     : 'text-muted-foreground hover:text-foreground'}"
             >
                 Dynamic
             </button>
             <button
-                onclick={() => mode = "fixed"}
-                class="flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all {mode === 'fixed'
+                onclick={() => (mode = "fixed")}
+                class="flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all {mode ===
+                'fixed'
                     ? 'bg-background text-foreground shadow-sm'
                     : 'text-muted-foreground hover:text-foreground'}"
             >
@@ -159,7 +161,6 @@ useHead({
             </button>
         </div>
 
-        <!-- URL Display -->
         <div
             class="bg-muted/30 rounded-md border border-sidebar-border p-3 relative group"
         >
@@ -167,9 +168,11 @@ useHead({
                 class="text-[11px] font-mono text-foreground break-all leading-relaxed"
             >
                 {#if mode === "fixed"}
-                    <span class="text-muted-foreground">{origin}</span>{imageUrl}
+                    <span class="text-muted-foreground">{origin}</span
+                    >{imageUrl}
                 {:else}
-                    <span class="text-muted-foreground">{origin}</span>{dynamicUrl}
+                    <span class="text-muted-foreground">{origin}</span
+                    >{dynamicUrl}
                 {/if}
             </div>
 
@@ -195,7 +198,6 @@ useHead({
         </button>
     </div>
 
-    <!-- Integration Snippets -->
     <div class="p-4 flex flex-col gap-4 flex-1 overflow-y-auto">
         <div>
             <h2
@@ -204,10 +206,9 @@ useHead({
                 Integration
             </h2>
 
-            <!-- Framework Selector -->
             <div class="relative mb-3">
                 <button
-                    onclick={() => frameworkOpen = !frameworkOpen}
+                    onclick={() => (frameworkOpen = !frameworkOpen)}
                     class="w-full flex items-center justify-between px-3 py-2 text-xs bg-background border border-input hover:bg-accent/50 rounded-md transition-all"
                 >
                     {#if selectedFrameworkInfo}
@@ -220,7 +221,12 @@ useHead({
                             {selectedFrameworkInfo.name}
                         </span>
                     {/if}
-                    <ChevronDown size={12} class="text-muted-foreground {frameworkOpen ? 'rotate-180' : ''} transition-transform" />
+                    <ChevronDown
+                        size={12}
+                        class="text-muted-foreground {frameworkOpen
+                            ? 'rotate-180'
+                            : ''} transition-transform"
+                    />
                 </button>
 
                 {#if frameworkOpen}
@@ -230,13 +236,16 @@ useHead({
                     >
                         {#each frameworks as fw}
                             <button
-                                onclick={() => { selectedFramework = fw.id; frameworkOpen = false; }}
-                                class="w-full px-3 py-2 text-xs text-left flex items-center gap-2 hover:bg-accent/50 {selectedFramework === fw.id ? 'text-foreground bg-accent/30' : 'text-muted-foreground'}"
+                                onclick={() => {
+                                    selectedFramework = fw.id;
+                                    frameworkOpen = false;
+                                }}
+                                class="w-full px-3 py-2 text-xs text-left flex items-center gap-2 hover:bg-accent/50 {selectedFramework ===
+                                fw.id
+                                    ? 'text-foreground bg-accent/30'
+                                    : 'text-muted-foreground'}"
                             >
-                                <svelte:component
-                                    this={fw.icon}
-                                    size={14}
-                                />
+                                <svelte:component this={fw.icon} size={14} />
                                 {fw.name}
                             </button>
                         {/each}
@@ -244,7 +253,6 @@ useHead({
                 {/if}
             </div>
 
-            <!-- Code Snippet -->
             <div class="flex flex-col gap-2">
                 <div
                     class="text-[10px] font-medium text-muted-foreground flex items-center gap-1.5"
@@ -257,17 +265,17 @@ useHead({
                 >
                     <code
                         class="text-[10px] font-mono text-muted-foreground whitespace-pre block leading-relaxed"
-                    >{snippet}</code>
+                        >{snippet}</code
+                    >
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer Info -->
     <div class="p-4 border-t border-sidebar-border mt-auto">
         <div class="text-[10px] text-muted-foreground text-center">
             ogx is open source. <a
-                href="https://github.com/judekim0507/ogx"
+                href="https:
                 class="underline hover:text-foreground transition-all"
                 target="_blank"
                 rel="noopener noreferrer">View on GitHub</a

@@ -3,9 +3,9 @@
  */
 
 export interface HSL {
-	h: number; // 0-360
-	s: number; // 0-100
-	l: number; // 0-100
+	h: number; 
+	s: number; 
+	l: number; 
 }
 
 export interface DerivedColors {
@@ -20,10 +20,10 @@ export interface DerivedColors {
  * Convert hex color to HSL
  */
 export function hexToHsl(hex: string): HSL {
-	// Remove # if present
+	
 	hex = hex.replace(/^#/, '');
 
-	// Parse hex
+	
 	const r = parseInt(hex.slice(0, 2), 16) / 255;
 	const g = parseInt(hex.slice(2, 4), 16) / 255;
 	const b = parseInt(hex.slice(4, 6), 16) / 255;
@@ -130,20 +130,20 @@ export function deriveColors(themeColor: string): DerivedColors {
 	const isLight = lum > 0.4;
 	console.log('→ Luminance:', lum.toFixed(3), '→ isLight:', isLight);
 
-	// Background is the theme color
+	
 	const bgColor = themeColor;
 
-	// Text color: high contrast
+	
 	const textColor = isLight ? '#1a1a1a' : '#ffffff';
 	console.log('→ textColor:', textColor, '(high contrast)');
 
-	// Muted text: same hue, adjusted for contrast
+	
 	const textMuted = isLight
 		? hslToHex({ h: hsl.h, s: Math.max(hsl.s - 20, 0), l: 30 })
 		: hslToHex({ h: hsl.h, s: Math.max(hsl.s - 20, 0), l: 70 });
 	console.log('→ textMuted:', textMuted, `(h:${hsl.h}, s:${Math.max(hsl.s - 20, 0)}, l:${isLight ? 30 : 70})`);
 
-	// Accent color: analogous (30° shift) with boosted saturation
+	
 	const accentHsl = {
 		h: (hsl.h + 30) % 360,
 		s: Math.min(hsl.s + 15, 100),
@@ -152,12 +152,12 @@ export function deriveColors(themeColor: string): DerivedColors {
 	const accentColor = hslToHex(accentHsl);
 	console.log('→ accentColor:', accentColor, `(h:${accentHsl.h}, s:${accentHsl.s}, l:${accentHsl.l})`);
 
-	// Glow color: shift toward pink/magenta range for dramatic neon effect
-	// For dark/saturated colors, use a bright pink/magenta glow
+	
+	
 	const glowHsl = {
-		h: (hsl.h + 270) % 360, // Shift toward pink/magenta (300° is magenta)
-		s: Math.min(hsl.s + 40, 100), // High saturation for vibrancy
-		l: 65 // Bright for glow effect
+		h: (hsl.h + 270) % 360, 
+		s: Math.min(hsl.s + 40, 100), 
+		l: 65 
 	};
 	const glowColor = hslToHex(glowHsl);
 	console.log('→ glowColor:', glowColor, `(h:${glowHsl.h}, s:${glowHsl.s}, l:${glowHsl.l})`);

@@ -6,15 +6,15 @@ export const schema = z.object({
 	title: z.string().min(1).max(100),
 	subtitle: z.string().max(100).optional(),
 	siteName: z.string().max(50).optional(),
-	// Primary color - all others derived from this
+	
 	themeColor: z.string().default('#5C0909'),
-	// Advanced overrides (optional)
+	
 	bgColor: z.string().optional(),
 	textColor: z.string().optional(),
 	glowColor: z.string().optional()
 });
 
-// Helper to create glow orb
+
 function createGlowOrb(x: number, y: number, width: number, height: number, glowColor: string) {
 	return {
 		type: 'div',
@@ -39,7 +39,7 @@ export default defineTemplate({
 	schema,
 	defaultConfig: OG_DIMENSIONS,
 	render: (props, config) => {
-		// Derive colors from theme, apply any overrides
+		
 		const colors = applyColorOverrides(props.themeColor, {
 			bgColor: props.bgColor,
 			textColor: props.textColor,
@@ -62,14 +62,14 @@ export default defineTemplate({
 					overflow: 'hidden'
 				},
 				children: [
-					// Glow orbs
+					
 					createGlowOrb(-200, 50, 600, 520, colors.glowColor),
 					createGlowOrb(800, -50, 500, 450, colors.glowColor),
 					createGlowOrb(600, 400, 700, 600, colors.glowColor),
 					createGlowOrb(-100, 350, 550, 500, colors.glowColor),
 					createGlowOrb(900, 300, 450, 400, colors.glowColor),
 
-					// Accent bar
+					
 					{
 						type: 'div',
 						props: {
@@ -86,7 +86,7 @@ export default defineTemplate({
 						}
 					},
 
-					// Main title
+					
 					{
 						type: 'div',
 						props: {
@@ -131,7 +131,7 @@ export default defineTemplate({
 						}
 					},
 
-					// Site name at bottom
+					
 					props.siteName ? {
 						type: 'div',
 						props: {

@@ -2,10 +2,10 @@ import { createHash } from 'crypto';
 import { mkdir, readFile, writeFile, readdir, stat, rm } from 'fs/promises';
 import { join } from 'path';
 
-// Cache directory - configurable via environment
+
 const CACHE_DIR = process.env.OGX_CACHE_DIR || '.cache/og-images';
 
-// Ensure cache directory exists
+
 let cacheReady: Promise<void> | null = null;
 
 async function ensureCacheDir(): Promise<void> {
@@ -20,7 +20,7 @@ async function ensureCacheDir(): Promise<void> {
  * Uses SHA-256 for collision resistance
  */
 export function generateCacheKey(template: string, params: Record<string, string>): string {
-	// Sort params for deterministic ordering
+	
 	const sortedParams = Object.keys(params)
 		.sort()
 		.map((key) => `${key}=${params[key]}`)
@@ -29,7 +29,7 @@ export function generateCacheKey(template: string, params: Record<string, string
 	const input = `${template}:${sortedParams}`;
 	const hash = createHash('sha256').update(input).digest('hex');
 
-	// Use first 16 chars for reasonable uniqueness with shorter filenames
+	
 	return hash.substring(0, 16);
 }
 
@@ -42,7 +42,7 @@ export async function getCachedImage(cacheKey: string): Promise<Buffer | null> {
 		const filePath = join(CACHE_DIR, `${cacheKey}.png`);
 		return await readFile(filePath);
 	} catch {
-		// File doesn't exist or read error
+		
 		return null;
 	}
 }
@@ -64,7 +64,7 @@ export async function clearCache(): Promise<void> {
 		await rm(CACHE_DIR, { recursive: true, force: true });
 		cacheReady = null;
 	} catch {
-		// Ignore if directory doesn't exist
+		
 	}
 }
 

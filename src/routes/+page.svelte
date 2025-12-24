@@ -5,7 +5,6 @@
 	import Canvas from "$lib/components/Canvas.svelte";
 	import { Skeleton } from "$lib/components/ui/skeleton";
 
-	// Types for API response
 	type Category = { id: string; name: string };
 	type TemplateInfo = { id: string; name: string; description: string };
 	type FieldInfo = {
@@ -16,7 +15,6 @@
 		advanced: boolean;
 	};
 
-	// State
 	let selectedCategory = $state("generic");
 	let selectedTemplate = $state("generic");
 	let params = $state<Record<string, string>>({});
@@ -24,12 +22,10 @@
 	let isLoading = $state(false);
 	let isLoadingTemplates = $state(true);
 
-	// Data from API
 	let categories = $state<Category[]>([]);
 	let templates = $state<Record<string, TemplateInfo[]>>({});
 	let templateFields = $state<Record<string, FieldInfo[]>>({});
 
-	// Derived state
 	let currentFields = $derived(
 		(templateFields[selectedTemplate] || []).map((f) => ({
 			key: f.key,
@@ -48,7 +44,6 @@
 	});
 
 	function formatLabel(key: string): string {
-		// Convert camelCase to Title Case
 		return key
 			.replace(/([A-Z])/g, " $1")
 			.replace(/^./, (str) => str.toUpperCase())
@@ -70,7 +65,6 @@
 	}
 
 	function getDefaultParams(templateId: string): Record<string, string> {
-		// Start with schema defaults from the template
 		const defaults: Record<string, string> = {};
 		const fields = templateFields[templateId] || [];
 		for (const field of fields) {
@@ -79,7 +73,6 @@
 			}
 		}
 
-		// Add content defaults based on template type
 		if (templateId.includes("blog")) {
 			defaults.title = defaults.title || "How to Build Modern Web Apps";
 			defaults.author = defaults.author || "Jane Doe";
@@ -129,7 +122,6 @@
 			templates = data.templates;
 			templateFields = data.fields;
 
-			// Select first category and template
 			if (categories.length > 0) {
 				selectCategory(categories[0].id);
 			}

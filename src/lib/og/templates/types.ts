@@ -1,6 +1,6 @@
 import type { z } from 'zod';
 
-// Satori-compatible element type (plain object, not JSX)
+
 export type SatoriElement = {
 	type: string;
 	props: {
@@ -11,7 +11,7 @@ export type SatoriElement = {
 	};
 };
 
-// Standard OG image dimensions
+
 export const OG_DIMENSIONS = {
 	width: 1200,
 	height: 630
@@ -22,7 +22,7 @@ export interface TemplateConfig {
 	height: number;
 }
 
-// Template definition interface
+
 export interface Template<TProps extends z.ZodType = z.ZodType> {
 	name: string;
 	description: string;
@@ -31,7 +31,7 @@ export interface Template<TProps extends z.ZodType = z.ZodType> {
 	render: (props: z.infer<TProps>, config: TemplateConfig) => SatoriElement;
 }
 
-// Helper to create type-safe templates
+
 export function defineTemplate<TSchema extends z.ZodType>(template: Template<TSchema>): Template<TSchema> {
 	return template;
 }

@@ -2,10 +2,10 @@ import type { RequestHandler } from './$types';
 import { getTemplate, listTemplates } from '$lib/og/templates';
 import type { z } from 'zod';
 
-// Categories are derived from template names (e.g., "blog-minimal" → "blog")
+
 const KNOWN_CATEGORIES = ['generic', 'blog', 'marketplace', 'developer'] as const;
 
-// Fields that are considered "advanced" (color overrides)
+
 const ADVANCED_FIELD_PATTERNS = ['bgColor', 'textColor', 'glowColor', 'accentColor', 'textMuted'];
 
 function getCategoryFromName(name: string): string {
@@ -31,14 +31,14 @@ function formatCategoryName(id: string): string {
 }
 
 function isAdvancedField(key: string): boolean {
-	// Fields ending with 'Color' (except themeColor) are advanced
+	
 	if (key.endsWith('Color') && key !== 'themeColor') {
 		return true;
 	}
 	return ADVANCED_FIELD_PATTERNS.includes(key);
 }
 
-// Extract field info from a Zod schema
+
 function extractFieldsFromSchema(schema: z.ZodType): Array<{
 	key: string;
 	required: boolean;

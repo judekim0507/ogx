@@ -29,11 +29,9 @@
 	let searchQuery = $state("");
 	let advancedOpen = $state(false);
 
-	// Split fields into basic and advanced
 	let basicFields = $derived(currentFields.filter((f: any) => !f.advanced));
 	let advancedFields = $derived(currentFields.filter((f: any) => f.advanced));
 
-	// Derived state for filtering categories
 	let filteredCategories = $derived(
 		categories.filter((c: any) =>
 			c.name.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -67,7 +65,6 @@
 <aside
 	class="w-[300px] bg-sidebar border-r border-sidebar-border flex flex-col h-full text-sidebar-foreground overflow-y-auto"
 >
-	<!-- Header -->
 	<div class="px-4 py-4 border-b border-sidebar-border">
 		<h2
 			class="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3"
@@ -75,7 +72,6 @@
 			Target
 		</h2>
 
-		<!-- Custom Combobox -->
 		<div class="relative">
 			<button
 				onclick={toggleOpen}
@@ -103,7 +99,6 @@
 					transition:slide={{ duration: 150 }}
 					class="absolute z-50 w-full mt-2 bg-popover border border-border rounded-lg shadow-xl overflow-hidden"
 				>
-					<!-- Search -->
 					<div class="p-2 border-b border-border">
 						<div class="relative">
 							<Search
@@ -120,7 +115,6 @@
 						</div>
 					</div>
 
-					<!-- Options -->
 					<div class="max-h-[200px] overflow-y-auto py-1">
 						{#each filteredCategories as cat}
 							<button
@@ -153,7 +147,6 @@
 					</div>
 				</div>
 
-				<!-- Backdrop to close -->
 				<div
 					class="fixed inset-0 z-40"
 					onclick={() => (open = false)}
@@ -162,7 +155,6 @@
 		</div>
 	</div>
 
-	<!-- Templates (Clean Grid) -->
 	<div class="px-4 pt-4 pb-6 border-b border-sidebar-border/40">
 		<h2
 			class="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2"
@@ -191,7 +183,6 @@
 		</div>
 	</div>
 
-	<!-- Parameters -->
 	<div class="p-4 flex flex-col gap-4">
 		<div>
 			<h2
@@ -204,7 +195,6 @@
 			</p>
 		</div>
 
-		<!-- Basic Fields -->
 		<div class="flex flex-col gap-3">
 			{#each basicFields as field}
 				<div class="group">
@@ -246,7 +236,6 @@
 			{/each}
 		</div>
 
-		<!-- Advanced Fields (Collapsible) -->
 		{#if advancedFields.length > 0}
 			<div class="mt-2">
 				<button
